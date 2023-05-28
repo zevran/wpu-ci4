@@ -52,4 +52,9 @@ class Pages extends BaseController
         ];
         return view('pages/contact', $data);
     }
+
+    public function phpinfo()
+    {
+        return phpinfo();
+    }
 }
