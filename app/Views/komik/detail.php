@@ -15,8 +15,14 @@
                             <h5 class="card-title"><?= $isi_komik['judul']; ?></h5>
                             <p class="card-text"><?= $isi_komik['penulis']; ?></p>
                             <p class="card-text"><small class="text-body-secondary"><?= $isi_komik['penerbit']; ?></small></p>
-                            <a href="" class="btn btn-warning">Edit</a>
-                            <a href="" class="btn btn-danger">Delete</a>
+                            <a href="/komik/edit/<?= $isi_komik['slug']; ?>" class="btn btn-warning">Edit</a>
+                            <form action="/komik/<?= $isi_komik['id']; ?>" method="post" class="d-inline">
+                                <!-- agar terhindar dari serangan cross attack -->
+                                <?= csrf_field(); ?>
+                                <!-- membuat http method spoofing (method post akan digantikan dengan DELETE) -->
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin mau dihapus??');">Delete </button>
+                            </form>
                             <br><br>
                             <a href="/komik">Kembali ke daftar Komik</a>
                         </div>

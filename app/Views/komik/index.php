@@ -4,7 +4,13 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8">
+            <a href="/komik/create" class="btn btn-primary mt-3">Tambah Data Komik</a>
             <h3 class="mt-3">Daftar Komik</h3>
+            <?php if (session()->getFlashdata('pesan')) : ?>
+                <div class="alert alert-info" role="alert">
+                    <?= session()->getFlashdata('pesan'); ?>
+                </div>
+            <?php endif; ?>
             <table class="table table-success table-striped mt-3">
                 <thead>
                     <tr>
