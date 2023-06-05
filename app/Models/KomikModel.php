@@ -15,10 +15,11 @@ class KomikModel extends Model
 
     public function getKomik($slug = false)
     {
+        // cek kalau tidak ada slug yang dikirim, tampilkan semua data
         if ($slug == false) {
             return $this->findAll();
         }
-
+        // apabila ada slug dikirim, tampilkan satu data berdasarkan slug
         return $this->where(['slug' => $slug])->first();
     }
 }
