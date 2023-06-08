@@ -5,9 +5,10 @@
     <div class="row">
         <div class="col-8">
             <h2 class="my-3">Form Ubah Data</h2>
-            <form action="/komik/update/<?= $isi_komik['id']; ?>" method="post">
+            <form action="/komik/update/<?= $isi_komik['id']; ?>" method="post" enctype="multipart/form-data">
                 <?= csrf_field(); ?>
                 <input type="hidden" name="slug" value="<?= $isi_komik['slug']; ?>">
+                <input type="hidden" name="sampulLama" value="<?= $isi_komik['sampul']; ?>">
                 <div class="row mb-3 mt-3">
                     <label for="judul" class="col-sm-2 col-form-label">Judul</label>
                     <div class="col-sm-10">
@@ -39,10 +40,16 @@
                 </div>
                 <div class="row mb-3">
                     <label for="sampul" class="col-sm-2 col-form-label">Sampul</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control <?= isset($validation['sampul']) ? 'is-invalid' : ''; ?>" id="sampul" name="sampul" value="<?= (old('sampul')) ? old('sampul') : $isi_komik['sampul'] ?>">
-                        <div class="invalid-feedback">
-                            <?= $validation['sampul'] ?? '' ?>
+                    <div class="col-sm-2">
+                        <img src="/img/<?= $isi_komik['sampul']; ?>" class="img-thumbnail img-preview">
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control img-sampul <?= isset($validation['sampul']) ? 'is-invalid' : ''; ?>" id="sampul" name="sampul" onchange="previewImg()">
+                            <div class="invalid-feedback">
+                                <?= $validation['sampul'] ?? '' ?>
+                            </div>
+                            <label class="input-group-text label-sampul" for="sampul">Upload</label>
                         </div>
                     </div>
                 </div>

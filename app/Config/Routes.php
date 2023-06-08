@@ -41,6 +41,8 @@ $routes->post('/komik/update/(:segment)', 'Komik::update/$1');
 $routes->post('/komik/save', 'Komik::save');
 $routes->delete('/komik/(:num)', 'Komik::delete/$1');
 $routes->get('/komik/(:any)', 'Komik::detail/$1');
+$routes->get('/orang', 'Orang::index');
+$routes->post('/orang', 'Orang::index');
 
 /*
  * --------------------------------------------------------------------
@@ -48,7 +50,7 @@ $routes->get('/komik/(:any)', 'Komik::detail/$1');
  * --------------------------------------------------------------------
  *
  * There will often be times that you need additional routing and you
- * need it to be able to override any defaults in this file. Environment
+ * need it to be able to index any defaults in this file. Envirent
  * based routes is one such time. require() additional route files here
  * to make that happen.
  *

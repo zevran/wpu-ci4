@@ -18,6 +18,9 @@
                 <li class="nav-item">
                     <a class="nav-link <?= $komik; ?>" href="/komik">Komik</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= $nav_orang; ?>" href="/orang">Orang</a>
+                </li>
             </ul>
         </div>
     </div>

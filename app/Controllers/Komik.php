@@ -23,6 +23,7 @@ class Komik extends BaseController
             'about' => '',
             'contact' => '',
             'komik' => 'active',
+            'nav_orang' => '',
             'isi_komik' => $this->komikModel->getKomik()
         ];
 
@@ -46,6 +47,7 @@ class Komik extends BaseController
             'about' => '',
             'contact' => '',
             'komik' => 'active',
+            'nav_orang' => '',
             'isi_komik' => $this->komikModel->getKomik($slug)
         ];
 
@@ -66,6 +68,7 @@ class Komik extends BaseController
             'about' => '',
             'contact' => '',
             'komik' => 'active',
+            'nav_orang' => '',
             'validation' => session('validation') // ambil data validation
 
         ];
@@ -99,25 +102,41 @@ class Komik extends BaseController
                 ]
             ],
             'sampul' => [
-                'rules' => 'required',
+                'rules' => 'max_size[sampul,1024]|is_image[sampul]|mime_in[sampul,image/png,image/jpeg,image/jpg]',
                 'errors' => [
-                    'required' => '{field} komik harus di isi.'
+                    'max_size' => 'Ukuran gambar terlalu besar',
+                    'is_image' => 'File yang di upload harus gambar',
+                    'mime_in' => 'File yang anda pilih bukan gambar'
                 ]
             ]
         ])) {
             //tampilkan pesan kesalahan input
-            $validation = \Config\Services::validation();
+            // $validation = \Config\Services::validation();
             //mengirim variable validation ke redirect, withInput untuk mengambil semua inputan, with untuk menampilkan pesan kesalahan
             //catatan : kalau menggunakan redirect tidak bisa langsung mengirimkan data variabel seperti halnya return view!
             return redirect()->to('komik/create')->withInput()->with('validation', $this->validator->getErrors());
         }
+
+        // ambil gambar
+        $fileSampul = $this->request->getFile('sampul');
+        // cek adakah gambar yg diupload?
+        if ($fileSampul->getError() == 4) {
+            $namaSampul = 'default.png';
+        } else {
+            // generate nama sampul random
+            $namaSampul = $fileSampul->getRandomName();
+            //dd($namaSampul);
+            // pindahkan file ke folder img
+            $fileSampul->move('img', $namaSampul);
+        }
+
         $slug = url_title($this->request->getVar('judul'), '-', true);
         $this->komikModel->save([
             'judul' => $this->request->getVar('judul'),
             'slug' => $slug,
             'penulis' => $this->request->getVar('penulis'),
             'penerbit' => $this->request->getVar('penerbit'),
-            'sampul' => $this->request->getVar('sampul')
+            'sampul' => $namaSampul
         ]);
 
         session()->setFlashdata('pesan', 'Data berhasil ditambahkan');
@@ -126,6 +145,14 @@ class Komik extends BaseController
 
     public function delete($id)
     {
+        // cari gambar berdasarkan $id
+        $komik = $this->komikModel->find($id);
+        // cek jika gambar nya adalah gambar default
+        if ($komik['sampul'] != 'default.png') {
+            // hapus gambar
+            unlink('img/' . $komik['sampul']);
+        }
+        // kalau bukan gambar default hanya hapus data di database saja
         $this->komikModel->delete($id);
         session()->setFlashdata('pesan', 'Data berhasil dihapus');
         return redirect()->to('/komik');
@@ -140,6 +167,7 @@ class Komik extends BaseController
             'about' => '',
             'contact' => '',
             'komik' => 'active',
+            'nav_orang' => '',
             'validation' => session('validation'), // ambil data validation
             'isi_komik' => $this->komikModel->getKomik($slug)
         ];
@@ -179,18 +207,37 @@ class Komik extends BaseController
                 ]
             ],
             'sampul' => [
-                'rules' => 'required',
+                'rules' => 'max_size[sampul,1024]|is_image[sampul]|mime_in[sampul,image/png,image/jpeg,image/jpg]',
                 'errors' => [
-                    'required' => '{field} komik harus di isi.'
+                    'max_size' => 'Ukuran gambar terlalu besar',
+                    'is_image' => 'File yang di upload harus gambar',
+                    'mime_in' => 'File yang anda pilih bukan gambar'
                 ]
             ]
         ])) {
             //tampilkan pesan kesalahan input
-            $validation = \Config\Services::validation();
+            // $validation = \Config\Services::validation();
             //mengirim variable validation ke redirect, withInput untuk mengambil semua inputan, with untuk menampilkan pesan kesalahan
             //catatan : kalau menggunakan redirect tidak bisa langsung mengirimkan data variabel seperti halnya return view!
             return redirect()->to('komik/edit/' . $this->request->getVar('slug'))->withInput()->with('validation', $this->validator->getErrors());
         }
+
+        $fileSampul = $this->request->getfile('sampul');
+        // cek apakah user mengupload file baru
+        if ($fileSampul->getError() == 4) {
+            $namaSampul = $this->request->getVar('sampulLama');
+        } else {
+            if ($namaSampul = $this->request->getVar('sampulLama') != "default.png") {
+                // hapus file yang lama
+                unlink('img/' . $this->request->getVar('sampulLama'));
+            }
+            // generate nama random
+            $namaSampul = $fileSampul->getRandomName();
+            // Pindahkan gambar
+            $fileSampul->move('img', $namaSampul);
+        }
+
+
         $slug = url_title($this->request->getVar('judul'), '-', true);
         // menggunakan kembali method save, karena secara default CI sudah tahu kalau yg dikirim ada 'id' maka querynya update, kalau tidak ada maka querynya insert
         $this->komikModel->save([
@@ -199,7 +246,7 @@ class Komik extends BaseController
             'slug' => $slug,
             'penulis' => $this->request->getVar('penulis'),
             'penerbit' => $this->request->getVar('penerbit'),
-            'sampul' => $this->request->getVar('sampul')
+            'sampul' => $namaSampul
         ]);
 
         session()->setFlashdata('pesan', 'Data berhasil diubah');

@@ -13,6 +13,7 @@ class Pages extends BaseController
             'about' => '',
             'contact' => '',
             'komik' => '',
+            'nav_orang' => ''
         ];
         return view('pages/home', $data);
     }
@@ -25,6 +26,7 @@ class Pages extends BaseController
             'about' => 'active',
             'contact' => '',
             'komik' => '',
+            'nav_orang' => ''
         ];
         return view('pages/about', $data);
     }
@@ -37,6 +39,7 @@ class Pages extends BaseController
             'about' => '',
             'contact' => 'active',
             'komik' => '',
+            'nav_orang' => '',
             'alamat' => [
                 [
                     'tipe' => 'Rumah',
